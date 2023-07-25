@@ -1,0 +1,12 @@
+Country,ExpectedYearsOfSchooling,HDIrank
+"Switzerland,Europe",16.5,1
+"Norway,Europe",18.2,2
+Australia,21.5,5
+"Canada,North America",16.4,15
+"United States,North America",16.3,21
+"Peru,South America",15.4,84
+"Brazil,South America",15.6,87
+"Bangladesh,Asia",12.4,129
+"India,Asia",11.9,132
+"Cambodia,Africa",11.5,146
+"Mali,Africa",7.4,186
