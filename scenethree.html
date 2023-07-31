@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src = "https://d3js.org/d3.v5.min.js"></script>
+    <title>cs416 d3 project</title>
+    <h1>Now Lets Interact With Some Real Data!</h1>
+    
+</head>
+<script src = "https://d3js.org/d3.v5.min.js"></script>
+<style> circle {fill: turquoise; stroke: black;} 
+        #tooltip {
+            opacity: 0;
+            position: absolute;
+            text-align: center;
+            width: 150px; height: 145px;
+            background: white;
+            border: 0px;
+        }
+        #start {
+            display:block;
+            margin:auto;
+            width: 100px; height: 40px;
+        }
+</style>
+
+<body onload='init()'>
+    <!-- <svg width=1400 height=700></svg> -->
+    <div id = "tooltip"></div>
+    <div id = "svg_area"></div>
+
+    <script>
+        async function init() { 
+            console.log("hi")
+            const data = await d3.csv('https://raw.githubusercontent.com/vmanep2/cs416project/main/HDIdata.csv');
+            console.log("hi")
+            console.log("data", data)
+
+            const title = "HDI Rank Correlation";
+            const yaxisname = "Expected Years of Schooling";
+            const xaxisname = "HDI Rank in Descending Order";
+
+            var x = d3.scaleLinear().domain([0,191]).range([0,1300]);
+            var y = d3.scaleLinear().domain([0,25]).range([600,0]);
+
+            var tooltip = d3.select("#tooltip");
+
+            var svg = d3.select("#svg_area")
+            .append("svg")
+            .attr("width", 1400)
+            .attr("height", 700)
+            //The zooming feature was referenced from this link
+            // https://d3-graph-gallery.com/graph/interactivity_zoom.html#brushingforzoom
+            .call(d3.zoom().scaleExtent([1, 8]).on("zoom", function () {
+                svg.attr("transform", d3.event.transform)
+
+            }))
+            .append("g")
+
+            svg.append("g").attr("transform","translate("+50+","+50+")")
+            .call(d3.axisLeft(y))
+            .append('text')
+            .attr('class', 'axis-label')
+            .attr('y', -35)
+            .attr('x', -200)
+            .attr('transform', 'rotate(-90)')
+            .attr('fill', 'black')
+            .style("font-size","18px")
+            .text(yaxisname);
+
+            svg.append("g").attr("transform","translate("+50+","+(600+50)+")")
+            .call(d3.axisBottom(x).ticks(60))
+            .append('text')
+            .attr('class', 'axis-label')
+            .attr('y', 40)
+            .attr('x', 660)
+            .attr('fill', 'black')
+            .style("font-size","18px")
+            .text(xaxisname);
+
+            svg
+            .append('g')
+            .attr("transform","translate("+580+","+50+")")
+            .append('text')
+            .attr('class', 'title')
+            .attr('y', -10)
+            .style("font-size","30px")
+            .text(title);
+
+    
+            svg.append("g").attr("transform","translate("+50+","+50+")")
+            .selectAll("circle")
+            .data(data)
+            .enter()
+            .append("circle")
+            .attr("cx", function(d,i) { return x(d.HDIrank);})
+            .attr("cy", function(d,i) {return y(d.ExpectedYearsOfSchooling);})
+            .attr("r", function(d,i) {return 6;})
+            .on("mouseover", function(d,i) {
+                tooltip.style("opacity", 1)
+                        .style("left",(d3.event.pageX)+"px")
+                        .style("top",(d3.event.pageY)+"px")
+                        .style("pointer-events", "none")
+                        .html("Country: "+d.Country+ '<br>'+"HDI value: "+d.HDI+ '<br>'+"HDI rank: "+d.HDIrank+ '<br>'+ "Expected Years of Schooling: " +d.ExpectedYearsOfSchooling+ '<br>'+ 'Life Expectancy: ' +d.LifeExpectancyAtBirth+ '<br>'+ 'Gross National Income Per Capita: '+ d.GrossNationalIncomePerCapita);
+            })
+            .on("mouseout", function() { tooltip.style("opacity", 0) });
+        }
+        
+    </script> 
+
+    <p style = "font-size: 20px">
+        This final visualation gives the whole story. You can see all the main variables that measure standards of living by interacting with the visualization.
+        <br>
+        <br>
+        Feel free to zoom in and out and examine the differences and trends between regions and countries.
+        <br>
+        <br>
+        You can also hover over each data point and get more information about the specific country.
+        <br>
+        <br>
+        Human Development Index is an important concept to understand as it is a credible measure of the standards of living in a country. Understanding HDI
+        allows you to develop a understanding of global living standards and recognize that not all countries prosper with the same priveleges as others.
+        Understanding Human Development Index and standards of living gives governments and policy-makers a lens to understand what factors need to be improved by comparing and learning from those of more developed countries.
+    </p>
+
+    <a href = "index.html">
+        <button id="start">Back to Start</button>
+    </a>
+
+</body>
+</html>

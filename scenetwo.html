@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src = "https://d3js.org/d3.v5.min.js"></script>
+    <title>cs416 d3 project</title>
+    <h1>Further Anaylsis of Trends</h1>
+    
+</head>
+<script src = "https://d3js.org/d3.v5.min.js"></script>
+<style> circle {fill: rgb(41, 180, 226); stroke: black;}
+
+        #scene3 {
+                display:block;
+                margin:auto;
+                }
+        #scene1 {
+                display:block;
+                margin:auto;
+                }
+
+</style>
+
+<body onload='init()'>
+    <svg width=700 height=700>
+    </svg>
+
+    <p> 
+        The above graph displays two variables that measure a country's standards of living.
+        <br>
+        <br>
+        It is imporant to see the correlation between the two variables but also keep in mind that correlation doesn't imply causation.
+        <br>
+        <br>
+        Click the Scene 3 button below to get to the next scene, or the Scene 1 buton to get to the previous scene.
+    </p>
+
+    <script>
+        async function init() { 
+            console.log("hi")
+            const data = await d3.csv('https://raw.githubusercontent.com/vmanep2/cs416project/main/HDIdata.csv');
+            console.log("hi")
+            console.log("data", data)
+
+            const title = "Expected Years of Schooling vs Life Expectancy";
+            const yaxisname = "Expected Years of Schooling";
+            const xaxisname = "Life Expectancy At Birth";
+
+            var x = d3.scaleLinear().domain([50,90]).range([0,600]);
+            var y = d3.scaleLinear().domain([0,25]).range([600,0]);
+
+            d3.select("svg")
+            .append("g")
+            .attr("transform","translate("+50+","+50+")")
+            .selectAll("circle")
+            .data(data)
+            .enter()
+            .append("circle")
+            .attr("cx", function(d,i) { return x(d.LifeExpectancyAtBirth);})
+            .attr("cy", function(d,i) { return y(d.ExpectedYearsOfSchooling);})
+            .transition().duration(3000)
+            .attr("r", function(d,i) {return 5;})
+            .transition().duration(3000);
+
+            d3.select('svg')
+            .append("g")
+            .attr("transform","translate("+50+","+50+")")
+            .call(d3.axisLeft(y))
+            .append('text')
+            .attr('class', 'axis-label')
+            .attr('y', -35)
+            .attr('x', -200)
+            .attr('transform', 'rotate(-90)')
+            .attr('fill', 'black')
+            .style("font-size","18px")
+            .text(yaxisname);
+
+            d3.select('svg')
+            .append("g")
+            .attr("transform","translate("+50+","+(600+50)+")")
+            .call(d3.axisBottom(x).ticks(20))
+            .append('text')
+            .attr('class', 'axis-label')
+            .attr('y', 40)
+            .attr('x', 300)
+            .attr('fill', 'black')
+            .style("font-size","18px")
+            .text(xaxisname);
+
+            d3.select('svg')
+            .append('g')
+            .attr("transform","translate("+168+","+50+")")
+            .append('text')
+            .attr('class', 'title')
+            .attr('y', -10)
+            .style("font-size","20px")
+            .text(title);
+        }
+        
+    </script> 
+    <a href = "index.html">
+        <button id ="scene1">Scene1</button>
+    </a>
+    <a href = "scenethree.html">
+        <button id ="scene3">Scene3</button>
+    </a>
+
+</body>
+</html>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src = "https://d3js.org/d3.v5.min.js"></script>
+    <title>cs416 d3 project</title>
+    <h1>Countries and Their Standards of Living</h1>
+    
+</head>
+<script src = "https://d3js.org/d3.v5.min.js"></script>
+<script src="https://rawgit.com/susielu/d3-annotation/master/d3-annotation.min.js"></script>
+<style> 
+        #scene2 {
+                    display:block;
+                    margin:auto;
+                }
+</style>
+<body onload='init()'>
+    <svg width=1500 height=700>
+    </svg>
+
+    <p> The chart above displays 2 countries from each continent and plots their Expected Years of Schooling.
+        <br>
+        <br>
+        It is also important to note the annotations that display the Human Development Index rank of each individual country and how it is done in descending order.
+        <br> 
+        <br>
+        It can be infered that there is a positive relationship between HDI rank and the countries associated Expected Years of Schooling, Although it might look like a negative trend 
+        the HDI rank is dependent on a number (Human Development Index) and this number is between (0,1). Switzerland has HDI of 0.962 an follows down to Mali with a HDI of 0.428.
+        <br>
+        <br>
+        It is also important to note that this relationship is not completely linear but has a strong correlation, which will be a consistent trend throughtou the visualization.
+        <br>
+        <br>
+        Follow along through each scene of the visulization through the navigating buttons below.
+        <br>
+        <br>
+        The above dataset and data used throughout this visualization was taken from the World Human Development Report 2021 and was put onto a dataset on Kaggle
+        by Raj Kumar Pandy. The link to the original dataset can be found below.
+        <br>
+        <br>
+        <a href = "https://www.kaggle.com/datasets/rajkumarpandey02/human-development-index-and-components"> Human Development Index and Component </a>
+    </p>
+
+    <script>
+        async function init() { 
+            const data = await d3.csv('https://raw.githubusercontent.com/vmanep2/cs416project/main/tabledata.csv');
+            console.log("data", data)
+            data.forEach(d => {d.ExpectedYearsOfSchooling = +d.ExpectedYearsOfSchooling;});
+            console.log("data", data)
+
+            const title = "Expected Years of Schooling for Countries in Each Continent";
+            const yaxisname = "Expected Years of Schooling";
+
+            var xs = d3.scaleBand().domain(["Switzerland,Europe","Norway,Europe","Australia","Canada,North America","United States,North America","Peru,South America","Brazil,South America","Bangladesh,Asia","India,Asia","Cambodia,Africa","Mali,Africa"]).range([0,1400]);
+            var ys = d3.scaleLinear().domain([0, 25]).range([600, 0]);
+            var hs = d3.scaleLinear().domain([0, 25]).range([0, 600]);
+            var b = xs.bandwidth();
+            var color_scale = d3.scaleLinear().domain([0,10]).range(["#345CFA","#34B8FA"]);
+
+            d3.select('svg')
+            .append("g")
+            .attr("transform","translate("+50+","+50+")")
+            .selectAll('rect')
+            .data(data)
+            .enter()
+            .append('rect')
+            .attr('x', function(d,i) {return xs(d.Country);})
+            .attr('width', b)
+            .attr('y', function(d,i) {return ys(7);})
+            .attr('height', function(d,i) {return hs(7);})
+            .transition().duration(3000)
+            .attr('y', function(d,i) {return ys(d.ExpectedYearsOfSchooling);})
+            .attr('height', function(d,i) {return hs(d.ExpectedYearsOfSchooling);})
+            .attr("fill", function(d,i) {return color_scale(i);});
+
+            d3.select('svg')
+            .append("g")
+            .attr("transform","translate("+50+","+50+")")
+            .call(d3.axisLeft(ys))
+            .append('text')
+            .attr('class', 'axis-label')
+            .attr('y', -35)
+            .attr('x', -200)
+            .attr('transform', 'rotate(-90)')
+            .attr('fill', 'black')
+            .style("font-size","18px")
+            .text(yaxisname);
+
+            d3.select('svg')
+            .append("g")
+            .attr("transform","translate("+50+","+(600+50)+")")
+            .call(d3.axisBottom(xs));
+
+            d3.select('svg')
+            .append('g')
+            .attr("transform","translate("+650+","+50+")")
+            .append('text')
+            .attr('class', 'title')
+            .attr('y', -10)
+            .style("font-size","20px")
+            .text(title);
+
+        //The annotation feautre was referenced from the link below
+        // https://d3-annotation.susielu.com/
+
+        const annotations = [
+        {
+          note: {
+            label: "Continent: Europe",
+            title: "HDI rank is 1",
+            wrap: 170,
+          },
+          connector: {
+            end: "arrow"
+          },
+          x: 116,
+          y: 240,
+          dy: -60,
+          dx: -0
+        },
+        {
+          note: {
+            label: "Continent: Europe",
+            title: "HDI rank is 2",
+            wrap: 150,
+          },
+          connector: {
+            end: "arrow"
+          },
+          x: 240,
+          y: 200,
+          dy: -60,
+          dx: -0
+        },
+        {
+          note: {
+            label: "Continent: Austalia",
+            title: "HDI rank is 5",
+            wrap: 150,
+          },
+          connector: {
+            end: "arrow",
+          },
+          x: 367,
+          y: 120,
+          dy: -60,
+          dx: 0
+        },
+        {
+          note: {
+            label: "Continent: North America",
+            title: "HDI rank is 15",
+            wrap: 150
+          },
+          connector: {
+            end: "arrow",
+          },
+          x: 494,
+          y: 245,
+          dy: -60,
+          dx: -0
+        },       
+        {
+          note: {
+            label: "Continent: North America",
+            title: "HDI rank is 21",
+            wrap: 150
+          },
+          connector: {
+            end: "arrow",
+          },
+          x: 621,
+          y: 248,
+          dy: -60,
+          dx: -0
+        },       
+        {
+          note: {
+            label: "Continent: South America",
+            title: "HDI rank is 84",
+            wrap: 150
+          },
+          connector: {
+            end: "arrow",
+          },
+          x: 748,
+          y: 268,
+          dy: -60,
+          dx: 0
+        },       
+        {
+          note: {
+            label: "Continent: South America",
+            title: "HDI rank is 87",
+            wrap: 150
+          },
+          connector: {
+            end: "arrow",
+          },
+          x: 875,
+          y: 262,
+          dy: -60,
+          dx: 0
+        },       
+        {
+          note: {
+            label: "Continent: Asia",
+            title: "HDI rank is 129",
+            wrap: 150
+          },
+          connector: {
+            end: "arrow",
+          },
+          x: 1002,
+          y: 340,
+          dy: -60,
+          dx: 0
+        },       
+        {
+          note: {
+            label: "Continent: Asia",
+            title: "HDI rank is 132",
+            wrap: 150
+          },
+          connector: {
+            end: "arrow",
+          },
+          x: 1129,
+          y: 350,
+          dy: -60,
+          dx: 0
+        },       
+        {
+          note: {
+            label: "Continent: Africa",
+            title: "HDI rank is 146",
+            wrap: 150
+          },
+          connector: {
+            end: "arrow",
+          },
+          x: 1256,
+          y: 360,
+          dy: -60,
+          dx: 0
+        },       
+        {
+          note: {
+            label: "Continent: Africa",
+            title: "HDI rank is 186",
+            wrap: 150
+          },
+          connector: {
+            end: "arrow",
+          },
+          x: 1387,
+          y: 460,
+          dy: -60,
+          dx: 0
+        },]
+
+        const makeAnnotations = d3.annotation()
+          .type(d3.annotationLabel)
+          .annotations(annotations)
+
+        d3.select("svg")
+          .append("g")
+          .attr("class", "annotations")
+          .call(makeAnnotations)
+        }
+        
+    </script> 
+
+    <a href = "scenetwo.html">
+        <button id ="scene2">Scene2</button>
+    </a>
+
+</body>
+</html>
